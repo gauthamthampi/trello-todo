@@ -40,7 +40,7 @@ const TaskBoard: React.FC = () => {
           <div key={task.id} className="bg-white p-4 rounded shadow-md">
             <h2 className="font-bold mb-2">{task.category}</h2>
             {task.items.map(item => (
-              <div key={item.title} className="mb-4">
+              <div key={item.title} className="mb-4 bg-gray-100 border rounded-md p-3">
                 <h3 className="font-semibold">{item.title}</h3>
                 <p className="text-sm text-gray-600">{item.description}</p>
                 <span className={`text-sm ${item.priority === 'Urgent' ? 'text-red-500' : item.priority === 'Medium' ? 'text-orange-500' : 'text-green-500'}`}>{item.priority}</span>

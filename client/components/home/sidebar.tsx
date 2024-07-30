@@ -33,7 +33,7 @@ const Sidebar: React.FC = () => {
           </li>
         </ul>
       </nav>
-      <button className="mt-6 w-full py-2 bg-purple-600 text-white rounded">Create new task</button>
+      <button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Create New</button>
       <button className="mt-4 w-full py-2 bg-gray-200 text-gray-700 rounded">Download the app</button>
     </aside>
   );
