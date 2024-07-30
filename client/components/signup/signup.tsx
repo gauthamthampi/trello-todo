@@ -2,27 +2,61 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import {localhost} from '../../url'
 
 const Signup: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    
+    try {
+      const response = await axios.post(`${localhost}/api/createUser`, {
+        name,
+        email,
+        password,
+      });
+      setSuccess('User registered successfully!');
+      setName('');
+      setEmail('');
+      setPassword('');
+    } catch (error: any) {
+      console.log(error);
+      
+      setError(error.response?.data?.error || 'An error occurred');
+    }
+  };
+   
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-purple-200">
       <div className="bg-white p-8 rounded shadow-md max-w-md w-full">
         <h2 className="text-3xl font-bold mb-6 text-center text-black">
           Welcome to <span className="text-purple-600">Workflo</span>!
         </h2>
-        <form>
-        <div className="mb-4">
+        <form onSubmit={handleSubmit}>
+          {error && <div className="mb-4 text-red-500">{error}</div>}
+          {success && <div className="mb-4 text-green-500">{success}</div>}
+          <div className="mb-4">
             <input
               type="text"
               id="name"
               className="mt-1 p-2 w-full border rounded"
               placeholder="Full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
             />
           </div>
           <div className="mb-4">
@@ -31,6 +65,9 @@ const Signup: React.FC = () => {
               id="email"
               className="mt-1 p-2 w-full border rounded"
               placeholder="Your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="mb-4 relative">
@@ -39,6 +76,9 @@ const Signup: React.FC = () => {
               id="password"
               className="mt-1 p-2 w-full border rounded"
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <span
               onClick={togglePasswordVisibility}
