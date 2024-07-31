@@ -1,13 +1,31 @@
+// components/Login.tsx
 'use client'
 import React, { useState } from 'react';
+import { useAppDispatch } from '../../Redux/Store/store';
+import { login } from '@/Redux/slices/authSlice'
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/login', { email, password });
+      dispatch(login(response.data.token));
+    } catch (err) {
+      setError('Invalid email or password');
+    }
   };
 
   return (
@@ -16,13 +34,15 @@ const Login: React.FC = () => {
         <h2 className="text-3xl font-bold mb-6 text-center text-black">
           Welcome to <span className="text-purple-600">Workflo</span>!
         </h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
               type="email"
               id="email"
               className="mt-1 p-2 w-full border rounded"
               placeholder="Your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-4 relative">
@@ -31,6 +51,8 @@ const Login: React.FC = () => {
               id="password"
               className="mt-1 p-2 w-full border rounded"
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <span
               onClick={togglePasswordVisibility}
@@ -39,6 +61,7 @@ const Login: React.FC = () => {
               <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
             </span>
           </div>
+          {error && <div className="text-red-500 mb-4">{error}</div>}
           <button
             type="submit"
             className="w-full py-2 px-4 bg-purple-600 text-white rounded hover:bg-purple-700"
