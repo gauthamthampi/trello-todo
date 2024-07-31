@@ -1,11 +1,13 @@
 // components/Login.tsx
 'use client'
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useAppDispatch } from '../../Redux/Store/store';
 import { login } from '@/Redux/slices/authSlice'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { localhost } from '@/url';
+import { useRouter } from 'next/navigation';
 
 const Login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -13,16 +15,26 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const dispatch = useAppDispatch();
+  const router = useRouter()
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+ 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/login', { email, password });
-      dispatch(login(response.data.token));
+      const response = await axios.post(`${localhost}/api/login`, { email, password });
+      dispatch(login());
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem('token', token);
+        console.log("Token Stored");
+        router.push("/home")
+        
+      }
     } catch (err) {
       setError('Invalid email or password');
     }

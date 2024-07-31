@@ -1,29 +1,31 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 dotenv.config();
 
-
-const userschema = new mongoose.Schema({
-    name:{
-        type: String,
-    },
-    email:{
-        type: String,
-        unique: true
-    },
-    password:{
-        type: String,
-    }
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+  },
+  email: {
+    type: String,
+    unique: true
+  },
+  password: {
+    type: String,
+  }
 });
 
-userschema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  try {
     const salt = await bcrypt.genSalt(10);
-    this.password = bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
-  });
+  } catch (error) {
+    next(error);
+  }
+});
 
-
-const userCollection = new mongoose.model("Users",userschema);
+const userCollection = mongoose.model('Users', userSchema);
 export default userCollection;

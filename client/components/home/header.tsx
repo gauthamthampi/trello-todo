@@ -1,13 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import getIdFromToken from '@/utils/decode';
+import axios from 'axios';
+import { localhost } from '@/url';
 
 interface HeaderProps {
   onCreateNewClick: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onCreateNewClick }) => {
+  const userId = getIdFromToken();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${localhost}/api/getUserDetails`, {
+          params: { userId },
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+    fetchUserData();
+  }, [userId]);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const getFirstName = (name: string) => {
+    return name.split(' ')[0];
+  };
+
   return (
     <div className="p-6 bg-white shadow-md">
-      <h1 className="text-4xl font-bold mb-2">Good morning, Joe!</h1>
+      <h1 className="text-4xl font-bold mb-2">
+        {user ? `${getGreeting()}, ${getFirstName(user.name)}!` : 'Loading...'}
+      </h1>
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-gray-100 rounded">
           <h2 className="font-semibold">Introducing tags</h2>

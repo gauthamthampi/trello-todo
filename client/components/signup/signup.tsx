@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import {localhost} from '../../url'
+import { useRouter } from 'next/navigation';
+
 
 const Signup: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -12,6 +14,7 @@ const Signup: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const router = useRouter()
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -28,10 +31,13 @@ const Signup: React.FC = () => {
         email,
         password,
       });
-      setSuccess('User registered successfully!');
+      setSuccess('User registered successfully! Redirecting to Login...');
       setName('');
       setEmail('');
       setPassword('');
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
     } catch (error: any) {
       console.log(error);
       
