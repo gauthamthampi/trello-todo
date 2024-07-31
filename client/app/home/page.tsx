@@ -9,15 +9,15 @@ import { useRouter } from 'next/navigation';
 const Home: React.FC = () => {
   const router = useRouter();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true); // Add loading state
-  
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (!token) {
       router.push("/login");
     } else {
-      setLoading(false); // Set loading to false when token is present
+      setLoading(false);
     }
   }, [router]);
 
@@ -27,6 +27,10 @@ const Home: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
+  };
+
+  const handleTaskChange = (message: string) => {
+    console.log(message); // You can replace this with any state update or notification logic
   };
 
   if (loading) {
@@ -52,7 +56,7 @@ const Home: React.FC = () => {
           <span className="sr-only">Loading...</span>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -61,7 +65,11 @@ const Home: React.FC = () => {
       <div className="flex flex-col flex-grow relative">
         <Header onCreateNewClick={handleCreateNewClick} />
         <TaskBoard />
-        <NewTaskModal isVisible={isModalVisible} onClose={handleCloseModal} />
+        <NewTaskModal 
+          isVisible={isModalVisible} 
+          onClose={handleCloseModal} 
+          onTaskChange={handleTaskChange}
+        />
       </div>
     </div>
   );

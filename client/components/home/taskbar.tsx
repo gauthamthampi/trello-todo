@@ -4,8 +4,7 @@ import { localhost } from '@/url';
 import getIdFromToken from '@/utils/decode';
 import NewTaskModal from './newtaskmodal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { faPencilAlt,faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 const TaskBoard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -45,27 +44,21 @@ const TaskBoard: React.FC = () => {
     setTimeout(() => setAlertMessage(null), 3000);
   };
 
-  const handleOnDragEnd = async (result) => {
-    if (!result.destination) return;
-
-    const { source, destination } = result;
-    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
-
-    const newTasks = Array.from(tasks);
-    const [movedTask] = newTasks.splice(source.index, 1);
-    movedTask.status = destination.droppableId;
-    newTasks.splice(destination.index, 0, movedTask);
-
-    setTasks(newTasks);
-
+  const handleDeleteClick = async (taskId: string) => {
     try {
-      await axios.post(`${localhost}/api/updateTaskStatus`, { taskId: movedTask._id, status: movedTask.status });
-    } catch (err) {
-      console.error('Failed to update task status', err);
+      await axios.delete(`${localhost}/api/deleteTasks/${taskId}`);
+      fetchTasks(); // Refresh the task list
+      setAlertMessage('Task deleted successfully');
+      setTimeout(() => setAlertMessage(null), 3000);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      setAlertMessage('Failed to delete task');
+      setTimeout(() => setAlertMessage(null), 3000);
     }
   };
+  
 
-  if (error) {
+  if (error ) {
     return <div>Error: {error}</div>;
   }
 
@@ -76,70 +69,54 @@ const TaskBoard: React.FC = () => {
           {alertMessage}
         </div>
       )}
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <div className="grid grid-cols-4 gap-4">
-          {['To do', 'In progress', 'Under review', 'Finished'].map((category) => (
-            <Droppable droppableId={category} key={category}>
-              {(provided) => (
-                <div
-                  className="bg-white p-4 rounded shadow-md"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
+      <div className="grid grid-cols-4 gap-4">
+        {['To do', 'In progress', 'Under review', 'Finished'].map((category) => (
+          <div key={category} className="bg-white p-4 rounded shadow-md">
+            <h2 className="font-bold mb-2">{category}</h2>
+            {tasks
+              .filter((task) => task.status === category)
+              .map((task) => (
+                <div key={task._id} className="mb-4 bg-gray-100 border rounded-md p-3 relative">
+                <h3 className="font-semibold">{task.title}</h3>
+                <p className="text-sm text-gray-600">{task.description}</p>
+                <span
+                  className={`text-sm ${
+                    task.priority === 'Urgent'
+                      ? 'text-red-500'
+                      : task.priority === 'Medium'
+                      ? 'text-orange-500'
+                      : 'text-green-500'
+                  }`}
                 >
-                  <h2 className="font-bold mb-2">{category}</h2>
-                  {tasks
-                    .filter((task) => task.status === category)
-                    .map((task, index) => (
-                      <Draggable draggableId={task._id.toString()} index={index} key={task._id}>
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="mb-4 bg-gray-100 border rounded-md p-3 relative"
-                          >
-                            <h3 className="font-semibold">{task.title}</h3>
-                            <p className="text-sm text-gray-600">{task.description}</p>
-                            <span
-                              className={`text-sm ${
-                                task.priority === 'Urgent'
-                                  ? 'text-red-500'
-                                  : task.priority === 'Medium'
-                                  ? 'text-orange-500'
-                                  : 'text-green-500'
-                              }`}
-                            >
-                              {task.priority}
-                            </span>
-                            <div className="text-sm text-gray-500">
-                              <p>{new Date(task.deadline).toLocaleDateString()}</p>
-                            </div>
-                            <button className="absolute top-2 right-2" onClick={() => handleEditClick(task)}>
-                              <FontAwesomeIcon icon={faPencilAlt} />
-                            </button>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                  {provided.placeholder}
-                  <button
-                    className="w-full py-2 bg-black text-white rounded"
-                    onClick={() => setModalVisible(true)}
-                  >
-                    Add new
-                  </button>
+                  {task.priority}
+                </span>
+                <div className="text-sm text-gray-500">
+                  <p>{new Date(task.deadline).toLocaleDateString()}</p>
                 </div>
-              )}
-            </Droppable>
-          ))}
-        </div>
-      </DragDropContext>
+                <button className="absolute top-2 right-10" onClick={() => handleDeleteClick(task._id)}>
+                  <FontAwesomeIcon icon={faTrashAlt} />
+                </button>
+                <button className="absolute top-2 right-2" onClick={() => handleEditClick(task)}>
+                  <FontAwesomeIcon icon={faPencilAlt} />
+                </button>
+              </div>
+            
+              ))}
+            <button
+              className="w-full py-2 bg-black text-white rounded"
+              onClick={() => setModalVisible(true)}
+            >
+              Add new
+            </button>
+          </div>
+        ))}
+      </div>
       {isModalVisible && (
         <NewTaskModal
           isVisible={isModalVisible}
           onClose={handleCloseModal}
           taskToEdit={taskToEdit}
-          onTaskChange={handleTaskChange}
+          onTaskChange={handleTaskChange} // Pass the callback prop
         />
       )}
     </div>

@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ onCreateNewClick }) => {
         </div>
         <div className="p-4 bg-gray-100 rounded">
           <h2 className="font-semibold">Access Anywhere</h2>
-          <p className="text-sm text-gray-600">Sync your notes across all devices. Stay productive whether you're on your phone, tablet, or computer.</p>
+          <p className="text-sm text-gray-600">Sync your notes across all devices. Stay productive whether you&apos;re on your phone, tablet, or computer.</p>
         </div>
       </div>
       <div className="flex items-center space-x-4">
