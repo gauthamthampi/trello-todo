@@ -61,7 +61,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar onCreateNewClick={handleCreateNewClick} />
       <div className="flex flex-col flex-grow relative">
         <Header onCreateNewClick={handleCreateNewClick} />
         <TaskBoard />

@@ -4,7 +4,7 @@ import { localhost } from '@/url';
 import getIdFromToken from '@/utils/decode';
 import NewTaskModal from './newtaskmodal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt,faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 const TaskBoard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -38,8 +38,24 @@ const TaskBoard: React.FC = () => {
     setModalVisible(false);
   };
 
-  const handleTaskChange = (message: string) => {
-    fetchTasks();
+  const handleTaskChange = (message: string, task?: any) => {
+    if (task) {
+      setTasks((prevTasks) => {
+        const existingTaskIndex = prevTasks.findIndex((t) => t._id === task._id);
+        if (existingTaskIndex !== -1) {
+          // Update existing task
+          const updatedTasks = [...prevTasks];
+          updatedTasks[existingTaskIndex] = task;
+          return updatedTasks;
+        } else {
+          // Add new task
+          return [...prevTasks, task];
+        }
+      });
+      fetchTasks()
+    } else {
+      fetchTasks();
+    }
     setAlertMessage(message);
     setTimeout(() => setAlertMessage(null), 3000);
   };
@@ -56,9 +72,8 @@ const TaskBoard: React.FC = () => {
       setTimeout(() => setAlertMessage(null), 3000);
     }
   };
-  
 
-  if (error ) {
+  if (error) {
     return <div>Error: {error}</div>;
   }
 
@@ -77,30 +92,29 @@ const TaskBoard: React.FC = () => {
               .filter((task) => task.status === category)
               .map((task) => (
                 <div key={task._id} className="mb-4 bg-gray-100 border rounded-md p-3 relative">
-                <h3 className="font-semibold">{task.title}</h3>
-                <p className="text-sm text-gray-600">{task.description}</p>
-                <span
-                  className={`text-sm ${
-                    task.priority === 'Urgent'
-                      ? 'text-red-500'
-                      : task.priority === 'Medium'
-                      ? 'text-orange-500'
-                      : 'text-green-500'
-                  }`}
-                >
-                  {task.priority}
-                </span>
-                <div className="text-sm text-gray-500">
-                  <p>{new Date(task.deadline).toLocaleDateString()}</p>
+                  <h3 className="font-semibold">{task.title}</h3>
+                  <p className="text-sm text-gray-600">{task.description}</p>
+                  <span
+                    className={`text-sm ${
+                      task.priority === 'Urgent'
+                        ? 'text-red-500'
+                        : task.priority === 'Medium'
+                        ? 'text-orange-500'
+                        : 'text-green-500'
+                    }`}
+                  >
+                    {task.priority}
+                  </span>
+                  <div className="text-sm text-gray-500">
+                    <p>{new Date(task.deadline).toLocaleDateString()}</p>
+                  </div>
+                  <button className="absolute top-2 right-10" onClick={() => handleDeleteClick(task._id)}>
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                  </button>
+                  <button className="absolute top-2 right-2" onClick={() => handleEditClick(task)}>
+                    <FontAwesomeIcon icon={faPencilAlt} />
+                  </button>
                 </div>
-                <button className="absolute top-2 right-10" onClick={() => handleDeleteClick(task._id)}>
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </button>
-                <button className="absolute top-2 right-2" onClick={() => handleEditClick(task)}>
-                  <FontAwesomeIcon icon={faPencilAlt} />
-                </button>
-              </div>
-            
               ))}
             <button
               className="w-full py-2 bg-black text-white rounded"

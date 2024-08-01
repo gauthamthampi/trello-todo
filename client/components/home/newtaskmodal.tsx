@@ -9,7 +9,7 @@ interface NewTaskModalProps {
   isVisible: boolean;
   onClose: () => void;
   taskToEdit?: any;
-  onTaskChange: (message: string) => void;
+  onTaskChange: (message: string, task?: any) => void; // Updated this line
 }
 
 const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToEdit, onTaskChange }) => {
@@ -68,12 +68,13 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
         userId,
       };
 
+      let response;
       if (taskToEdit) {
-        await axios.put(`${localhost}/api/tasks/${taskToEdit._id}`, taskData);
-        onTaskChange && typeof onTaskChange === 'function' && onTaskChange('Task edited successfully');
+        response = await axios.put(`${localhost}/api/tasks/${taskToEdit._id}`, taskData);
+        onTaskChange('Task edited successfully', response.data);
       } else {
-        await axios.post(`${localhost}/api/addTask`, taskData);
-        onTaskChange && typeof onTaskChange === 'function' && onTaskChange('Task added successfully');
+        response = await axios.post(`${localhost}/api/addTask`, taskData);
+        onTaskChange('Task added successfully', response.data); // Updated this line
       }
 
       onClose();
