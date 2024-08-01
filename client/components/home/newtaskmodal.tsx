@@ -18,6 +18,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
   const [priority, setPriority] = useState('');
   const [deadline, setDeadline] = useState('');
   const [description, setDescription] = useState('');
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const userId = getIdFromToken();
 
   useEffect(() => {
@@ -34,10 +35,24 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
       setDeadline('');
       setDescription('');
     }
+    setErrors({});
   }, [taskToEdit]);
+
+  const validateInputs = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!title) newErrors.title = 'Title is required';
+    if (!status) newErrors.status = 'Status is required';
+    if (!priority) newErrors.priority = 'Priority is required';
+    if (!deadline) newErrors.deadline = 'Deadline is required';
+    if (!description) newErrors.description = 'Description is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateInputs()) return;
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -97,6 +112,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
+            {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
           </div>
           <div className="mb-4 flex items-center">
             <FontAwesomeIcon icon={faSpinner} className="mr-2" />
@@ -112,6 +128,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
               <option value="Under review">Under Review</option>
               <option value="Finished">Finished</option>
             </select>
+            {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status}</p>}
           </div>
           <div className="mb-4 flex items-center">
             <FontAwesomeIcon icon={faStar} className="mr-2" />
@@ -126,6 +143,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
               <option value="Medium">Medium</option>
               <option value="Urgent">Urgent</option>
             </select>
+            {errors.priority && <p className="text-red-500 text-sm mt-1">{errors.priority}</p>}
           </div>
           <div className="mb-4 flex items-center">
             <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
@@ -136,6 +154,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
             />
+            {errors.deadline && <p className="text-red-500 text-sm mt-1">{errors.deadline}</p>}
           </div>
           <div className="mb-4 flex items-center">
             <FontAwesomeIcon icon={faPencilAlt} className="mr-2" />
@@ -145,6 +164,7 @@ const NewTaskModal: React.FC<NewTaskModalProps> = ({ isVisible, onClose, taskToE
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             ></textarea>
+            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
           </div>
           <button type="submit" className="p-2 bg-blue-600 text-white rounded">
             {taskToEdit ? 'Edit Task' : 'Add Task'}
