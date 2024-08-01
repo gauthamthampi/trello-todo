@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import getIdFromToken from '@/utils/decode'; // Your custom decode function
 import { localhost } from '@/url';
+import { BsFillPlusCircleFill } from "react-icons/bs";
+
 
 interface HeaderProps {
   onCreateNewClick: () => void;
@@ -124,8 +126,15 @@ const Sidebar: React.FC<HeaderProps> = ({ onCreateNewClick }) => {
             </li>
           </ul>
         </nav>
-        <button type="button" onClick={onCreateNewClick}
-        className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Create New</button>
+        <button
+  type="button"
+  onClick={onCreateNewClick}
+  className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex justify-between items-center gap-2"
+>
+  <span>Create New</span>
+  <BsFillPlusCircleFill />
+</button>
+        
       </div>
       <button className="mt-4 w-full py-2 bg-gray-200 text-gray-700 rounded flex items-center justify-center space-x-2">
         <HiArrowDownTray className="text-gray-700" />

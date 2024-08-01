@@ -5,6 +5,10 @@ import getIdFromToken from '@/utils/decode';
 import NewTaskModal from './newtaskmodal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FaPlus } from "react-icons/fa6";
+import { BsFillPlusCircleFill } from "react-icons/bs";
+
+
 
 const TaskBoard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -116,12 +120,13 @@ const TaskBoard: React.FC = () => {
                   </button>
                 </div>
               ))}
-            <button
-              className="w-full py-2 bg-black text-white rounded"
-              onClick={() => setModalVisible(true)}
-            >
-              Add new
-            </button>
+           <button
+             className="w-full py-2 bg-black text-white rounded flex justify-between items-center px-2"
+             onClick={() => setModalVisible(true)}
+           >
+             <span>Add new</span>
+             <FaPlus />
+           </button>
           </div>
         ))}
       </div>

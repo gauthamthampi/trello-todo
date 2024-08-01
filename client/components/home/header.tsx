@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import getIdFromToken from '@/utils/decode';
 import axios from 'axios';
 import { localhost } from '@/url';
+import { BsFillPlusCircleFill,BsStars } from "react-icons/bs";
+import { SlCalender } from "react-icons/sl";
+import { CiFilter } from "react-icons/ci";
+import { IoShareSocialOutline } from "react-icons/io5";
+
 
 interface HeaderProps {
   onCreateNewClick: () => void;
@@ -60,15 +65,29 @@ const Header: React.FC<HeaderProps> = ({ onCreateNewClick }) => {
       </div>
       <div className="flex items-center space-x-4">
         <input type="text" placeholder="Search" className="p-2 border rounded flex-grow" />
-        <button className="p-2 bg-gray-100 rounded">Calendar view</button>
-        <button className="p-2 bg-gray-100 rounded">Automation</button>
-        <button className="p-2 bg-gray-100 rounded">Filter</button>
-        <button 
-          type="button" 
-          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+        <button className="p-2 bg-gray-100 rounded flex justify-between items-center gap-2">
+        <span>Calendar view</span>
+        <SlCalender />
+        </button>                
+        <button className="p-2 bg-gray-100 rounded flex justify-between items-center gap-2">
+        <span>Automation</span>
+        <BsStars />
+        </button>             
+        <button className="p-2 bg-gray-100 rounded flex justify-between items-center gap-2">
+        <span>Filter</span>
+        <CiFilter />
+        </button> 
+        <button className="p-2 bg-gray-100 rounded flex justify-between items-center gap-2">
+        <span>Share</span>
+        <IoShareSocialOutline />
+        </button>                         
+        <button
+          type="button"
           onClick={onCreateNewClick}
+          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex justify-between items-center gap-2"
         >
-          Create New
+          <span>Create New</span>
+          <BsFillPlusCircleFill />
         </button>
       </div>
     </div>
